@@ -12,7 +12,7 @@ function concertQuery() {
     let queryUrl = "https://rest.bandsintown.com/artists/" + artistEntry + "/events?app_id=codingbootcamp"
     axios.get(queryUrl)
         .then((response) => {
-            console.log(response);
+            console.log(response.data);
         })
         .catch(function (error) {
             if (error.response) {
@@ -29,14 +29,21 @@ function concertQuery() {
             }
             console.log(error.config);
         });
-
 }
 
 function songQuery() {
     let songEntry = input;
     spotify.search({ type: 'track', query: songEntry })
         .then((response) => {
-            console.log(response)
+            console.log(response.tracks.items[0])
+            console.log("----Artist(s)----")
+            console.log(response.tracks.items[0].artists.name)
+            console.log("----Song----")
+            console.log(response.tracks.items[0].name)
+            console.log("----External Link----")
+            console.log(response.tracks.items[0].external_urls.spotify)
+            console.log("----Album----")
+            console.log(response.tracks.items[0].album.name)
         })
         .catch(function (error) {
             if (error.response) {
@@ -60,7 +67,23 @@ function movieQuery() {
     let queryUrl = "http://www.omdbapi.com/?t=" + movieEntry + "&y=&plot=short&apikey=trilogy";
     axios.get(queryUrl)
         .then((response) => {
-            console.log(response)
+            //console.log(response.data)
+            console.log("----Title----")
+            console.log(response.data.Title)
+            console.log("----Year----")
+            console.log(response.data.Year)
+            console.log("----IMBD Rating----")
+            console.log(response.data.Ratings[0].Value)
+            console.log("----Rotten Tomatoes----")
+            console.log(response.data.Ratings[1].Value)
+            console.log("----Country----")
+            console.log(response.data.Country)
+            console.log("----Language----")
+            console.log(response.data.Language)
+            console.log("----Plot----")
+            console.log(response.data.Plot)
+            console.log("----Actors----")
+            console.log(response.data.Actors)
         })
         .catch(function (error) {
             if (error.response) {
