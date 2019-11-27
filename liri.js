@@ -1,5 +1,6 @@
 require("dotenv").config();
 const axios = require("axios");
+const fs = require("fs");
 const moment = require("moment");
 const keys = require("./key.js");
 const Spotify = require('node-spotify-api');
@@ -12,7 +13,17 @@ function concertQuery() {
     let queryUrl = "https://rest.bandsintown.com/artists/" + artistEntry + "/events?app_id=codingbootcamp"
     axios.get(queryUrl)
         .then((response) => {
-            console.log(response.data);
+            const searchData = [
+                "----Venue----",
+                response.data[0].venue.name,
+                "----Location----",
+                response.data[0].venue.city + ", " + response.data[0].venue.country,
+                "----Date of Event(MM/DD/YYYY)----",
+                moment(response.data[0].datetime).format("MM/DD/YYYY"),
+                "-".repeat(60)
+            ].join("\n\n");
+
+            console.log(searchData)
         })
         .catch(function (error) {
             if (error.response) {
@@ -35,9 +46,8 @@ function songQuery() {
     let songEntry = input;
     spotify.search({ type: 'track', query: songEntry })
         .then((response) => {
-            console.log(response.tracks.items[0])
             console.log("----Artist(s)----")
-            console.log(response.tracks.items[0].artists.name)
+            console.log(response.tracks.items[0].album.artists[0].name)
             console.log("----Song----")
             console.log(response.tracks.items[0].name)
             console.log("----External Link----")
@@ -67,7 +77,6 @@ function movieQuery() {
     let queryUrl = "http://www.omdbapi.com/?t=" + movieEntry + "&y=&plot=short&apikey=trilogy";
     axios.get(queryUrl)
         .then((response) => {
-            //console.log(response.data)
             console.log("----Title----")
             console.log(response.data.Title)
             console.log("----Year----")
@@ -103,7 +112,24 @@ function movieQuery() {
 }
 
 function doWhatItSays() {
-    let userEntry = input;
+    fs.readFile('random.txt', (err, data) => {
+        if (err) throw err;
+
+        var txtData = data.toString();
+        var splitData = txtData.split(",");
+
+
+        if (splitData[0] === "spotify-this-song") {
+            input = splitData[1];
+            songQuery();
+        } else if (splitData[0] === "concert-this") {
+            input = splitData[1];
+            concertQuery();
+        } else if (splitData[0] === "movie-this") {
+            input = splitData[1];
+            movieQuery();
+        }
+    })
 }
 
 if (process.argv[2] === "concert-this") {
