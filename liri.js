@@ -6,7 +6,22 @@ const keys = require("./key.js");
 const Spotify = require('node-spotify-api');
 const spotify = new Spotify(keys.spotify);
 
-let input = process.argv[3];
+let input;
+let userInput = process.argv[3];
+
+if ((!process.argv[3]) && (process.argv[2] === "concert-this")) {
+    input = "Celine Dion";
+} else if ((process.argv[3] !== "") && (process.argv[2] === "concert-this")) {
+    input = userInput;
+} else if ((!process.argv[3]) && (process.argv[2] === "spotify-this-song")) {
+    input = "The Sign";
+} else if ((process.argv[3] !== "") && (process.argv[2] === "spotify-this-song")) {
+    input = userInput;
+} else if ((!process.argv[3]) && (process.argv[2] === "movie-this")) {
+    input = "Mr. Nobody";
+} else if ((process.argv[3] !== "") && (process.argv[2] === "movie-this")) {
+    input = userInput;
+}
 
 function concertQuery() {
     let artistEntry = input;
@@ -21,7 +36,7 @@ function concertQuery() {
                 "----Date of Event(MM/DD/YYYY)----",
                 moment(response.data[0].datetime).format("MM/DD/YYYY"),
                 "-".repeat(60)
-            ].join("\n\n");
+            ].join("\n");
 
             console.log(searchData)
         })
